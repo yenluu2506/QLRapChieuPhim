@@ -1,0 +1,179 @@
+﻿@model CinemeBooking.Models.Phim
+@using CinemeBooking.Models;
+@{
+    ViewBag.Title = "Details";
+}
+
+@Html.Partial("_Navbar")
+
+<div class="content">
+    <div class="film-details">
+        <div class="film-details__main">
+            <div class="film-details__header">
+                <div class="film-details__trailer">
+                    <img src="@Model.ApPhich"
+                         alt="@Model.TenPhim" />
+                    <a href="https://www.youtube.com/watch?v=RG2hFqzv7yQ" class="film-details__play-btn">
+                        <i class="fa-regular fa-circle-play"></i>
+                        <div></div>
+                    </a>
+                </div>
+
+                <div class="film-details__details">
+                    <h4 class="film-details__title">@Model.TenPhim</h4>
+                    <div class="film-details__rating film-details__details-item">
+                        <i class="fa-solid fa-star"></i>
+                        <p>9.2/10 - 1532</p>
+                        <button>ĐÁNH GIÁ</button>
+                    </div>
+
+                    <p class="film-details__runtime film-details__details-item">
+                        <i class="fa-solid fa-clock-rotate-left"></i>@Model.ThoiLuong phút
+                    </p>
+
+                    <p class="film-details__details-item">
+                        <span>Quốc gia: </span>@Model.QuocGia
+                    </p>
+
+                    <p class="film-details__details-item">
+                        <span>Diễn viên: </span>@Model.DienVien
+                    </p>
+
+                    <p class="film-details__details-item">
+                        <span>Thể loại: </span>@ViewBag.TheLoais
+                    </p>
+
+                    <p class="film-details__details-item">
+                        <span>Đạo diễn: </span>@Model.DaoDien
+                    </p>
+
+                    <p class="film-details__details-item">
+                        <span>Ngày khởi chiếu: </span>@Model.NgayKhoiChieu
+                    </p>
+                </div>
+            </div>
+
+            <div class="film-details__body">
+                <div class="film-details__content">
+                    <h4>Nội dung phim</h4>
+                    <p>@Model.MoTa</p>
+                </div>
+
+                <div class="film-details__showtimes">
+                    <h4>Lịch chiếu</h4>
+                    @using (Ajax.BeginForm("Details", "Phim", new AjaxOptions { UpdateTargetId = "formContainer" }, new { id = "phimDetailsForm" }))
+                    {
+                        @Html.AntiForgeryToken()
+                        @Html.ValidationSummary(true)
+                        <div class="film-details__showtimes-select">
+                            <select id="selectThanhPho" class="film-details__showtimes-select-item"
+                                    name="selectedThanhPho">
+                                @foreach (var item in ViewBag.RapChieu)
+                                {
+                                    <option value="@item.ThanhPho">@item.ThanhPho</option>
+                                }
+                            </select>
+
+                            <input id="selectDate" class="film-details__showtimes-select-item"
+                                   type="date" name="selectedDate" />
+
+                            <select class="film-details__showtimes-select-item"
+                                    name="selectedRapChieuId">
+                                <option>Tất cả rạp</option>
+                                @foreach (var item in ViewBag.RapChieu ?? new List<RapPhim>())
+                                {
+                                    <option value="@item.id">@item.TenRap</option>
+                                }
+                            </select>
+                        </div>
+
+                        foreach (var item in ViewBag.RapChieu ?? new List<RapPhim>())
+                        {
+                            <div class="film-details__showtimes-theatre">
+                                <h5>@item.TenRap</h5>
+                                <div>
+                                    <p>2D - Phụ đề</p>
+                                    @foreach (var lc in ViewBag.LichChieu ?? new List<LichChieu>())
+                                    {
+                                        <a href="/BookTicket/Index/@lc.id">@lc.GioBatDau</a>
+                                    }
+                                </div>
+                            </div>
+                        }
+                    }
+                </div>
+            </div>
+        </div>
+
+        <div class="film-details__aside">
+            <div class="films">
+                <h4 class="films__title film-details__aside__title">
+                    Phim đang chiếu
+                </h4>
+
+                <ul class="films__content">
+                    @if (ViewBag.PhimList != null)
+                    {
+                        for (int i = 0; i < ViewBag.PhimList.Count && i < 3; i++)
+                        {
+                            var item = ViewBag.PhimList[i];
+                            <li class="films__item">
+                                <a href="/Phim/Details/@item.id">
+                                    <img class="films__item-img"
+                                         src="@item.ApPhich"
+                                         alt="@item.TenPhim" />
+                                </a>
+                                <p class="films-item-des">@item.TenPhim</p>
+                            </li>
+                        }
+                    }
+                </ul>
+
+                <a href="/Phim" class="film-details__aside-btn">
+                    Xem thêm
+                    <i class="fa-solid fa-arrow-right-long"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+@Html.Partial("_Footer")
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        let selectDate = query("#selectDate");
+        let selectThanhPho = query("#selectThanhPho");
+        let phimDetailsForm = query("#phimDetailsForm");
+        let first = '@ViewBag.first';
+
+        Date.prototype.yyyymmdd = function () {
+            var mm = this.getMonth() + 1; // getMonth() is zero-based
+            var dd = this.getDate();
+
+            return [this.getFullYear(),
+            (mm > 9 ? '' : '0') + mm,
+            (dd > 9 ? '' : '0') + dd
+            ].join('-');
+        };
+
+        if (first === 'true') {
+            let today = new Date();
+            selectDate.value = today.yyyymmdd();
+        }
+        else {
+            let selectedDate = '@ViewBag.selectedDate';
+            let selectedDateFormat = new Date(selectedDate).yyyymmdd();
+            selectDate.value = selectedDateFormat;
+        }
+
+        selectDate.addEventListener("change", () => {
+            phimDetailsForm.submit();
+        });
+
+        selectThanhPho.addEventListener("change", () => {
+            phimDetailsForm.submit();
+        });
+
+    });
+</script>

@@ -1,0 +1,78 @@
+﻿@using (Html.BeginForm("CheckOut", "BookTicket", FormMethod.Post))
+{
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary(true);
+    <div class="container" style="position: relative; padding-top: 60px;">
+        <div class="row">
+            <div class="col-md-4 order-md-2 mb-4">
+                <h4 class="d-flex justify-content-between align-items-center mb-3">
+                    <span>Đơn hàng</span>
+                </h4>
+                <ul class="list-group mb-3">
+                    <li class="list-group-item d-flex justify-content-between lh-condensed">
+                        <div>
+                            <small class="text-muted">Thanh toán hóa đơn</small>
+                        </div>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between">
+                        <span>Tổng tiền thanh toán</span>
+                        <strong>@Session["TongTien"]</strong>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="form-group col-md-8 order-md-1" id="load_form_payment">
+                <h4> <label>Chọn phương thức thanh toán:</label><br /></h4>
+                <h5>Cách 1: Chuyển hướng sang VNPAY chọn phương thức thanh toán</h5>
+                <label><input type="radio" name="TypePaymentVN" value="0" checked /> Cổng thanh toán VNPAYQR </label>
+                <h5>Cách 2: Tách phương thức thanh toán tại site của Merchant</h5>
+                <label><input type="radio" name="TypePaymentVN" value="1" /> Thanh toán qua ứng dụng hỗ trợ VNPAYQR </label><br />
+                <label><input type="radio" name="TypePaymentVN" value="2" /> ATM-Tài khoản ngân hàng nội địa </label><br />
+                <label><input type="radio" name="TypePaymentVN" value="3" /> Thanh toán qua thẻ quốc tế </label><br />
+            </div>
+            <div class="form-group" id="load_send"></div>
+            <div class="form-group">
+                <button style="position: absolute; bottom: -60px;" type="submit" class="btn btn-block btn-success" id="btnCheckOut">Xác nhận</button>
+            </div>
+        </div>
+    </div>
+}
+
+<script>
+    $(document).ready(function () {
+    $("#btnCheckOut").click(function () {
+        var typePayment = $("input[name='TypePaymentVN']:checked").val();
+
+        // Tạo đối tượng FormData và thêm các thông tin cần gửi
+        var formData = new FormData(document.getElementById("checkoutForm"));
+        formData.append('TypePayment', typePayment);
+
+        // Thực hiện AJAX request với đối tượng FormData
+        $.ajax({
+            type: "POST",
+            url: "@Url.Action("CheckOut", "BookTicket")",
+            data: formData,
+            processData: false,
+            contentType: false,
+            success: function (data) {
+                if (data.Success) {
+                    if (data.Code) {
+                        window.location.href = data.Url;
+                        console.log(window.location.href)
+                    } else {
+                        // Xử lý trường hợp lỗi
+                    }
+                } else {
+                    // Xử lý trường hợp lỗi
+                }
+            },
+            error: function () {
+                // Xử lý trường hợp lỗi
+            }
+        });
+    });
+});
+
+</script>
+
+

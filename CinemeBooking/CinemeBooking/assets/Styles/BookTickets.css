@@ -1,0 +1,183 @@
+﻿.book-tickets {
+    display: flex;
+    margin-top: 36px;
+}
+
+.book-tickets__theatre {
+    padding: 0 12px;
+    flex: 1;
+}
+
+    .book-tickets__theatre h5 {
+        text-align: center;
+        margin-bottom: 80px;
+        text-transform: uppercase;
+        font-size: 18px;
+    }
+
+.book-tickets__screen {
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+    .book-tickets__screen img {
+        width: 100%;
+    }
+
+    .book-tickets__screen p {
+        text-transform: uppercase;
+        margin-top: -8px;
+        font-size: 13px;
+    }
+
+.book-tickets__room {
+    display: flex;
+}
+
+.book-tickets__room-rows {
+    font-size: 12px;
+}
+
+    .book-tickets__room-rows p {
+        line-height: 36px;
+        margin-bottom: 14px;
+    }
+
+.book-tickets__seats {
+    width: 100%;
+    padding: 0 12px;
+}
+
+.book-tickets__seats-row {
+    width: 100%;
+    margin-bottom: 12px;
+    display: grid;
+    grid-template-columns: auto auto auto;
+    justify-content: space-between;
+}
+
+.book-tickets__seats-col {
+    display: flex;
+    justify-content: flex-start;
+}
+
+    .book-tickets__seats-col button {
+        border: 1px solid white;
+        color: var(--text-color);
+        width: 42px;
+        line-height: 36px;
+        border-radius: 3px;
+        transition: color 0.2s, background-color 0.2s;
+    }
+
+        .book-tickets__seats-col button + button {
+            margin-left: 8px;
+        }
+
+.book-tickets__seats-btn--clicked {
+    background-color: white !important;
+    color: black !important;
+}
+
+.book-tickets__booking {
+    background-color: #0f142b;
+    width: 450px;
+}
+
+.book-tickets__film {
+    position: relative;
+}
+
+    .book-tickets__film img {
+        display: block;
+    }
+
+.book-tickets__film-shadow {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    box-shadow: inset 0 -48px 42px 0 var(--back-ground-color);
+    top: 0;
+    left: 0;
+}
+
+.book-tickets__booking-summary {
+    color: var(--black-text-color);
+    margin: 0 12px;
+    display: none;
+}
+
+    .book-tickets__booking-summary h5 {
+        font-size: 22px;
+        margin-bottom: 12px;
+        letter-spacing: 1px;
+        text-transform: uppercase;
+    }
+
+.book-tickets__booking-payment {
+    background-color: white;
+    padding: 16px 32px;
+    border-radius: 8px;
+}
+
+.book-tickets__booking-summary-seat-number {
+    margin-bottom: 32px;
+    font-weight: 600;
+    font-size: 14px;
+}
+
+.book-tickets__booking-price {
+    padding-bottom: 8px;
+}
+
+.book-tickets__booking-field {
+    display: flex;
+    justify-content: space-between;
+}
+
+#book-tickets__price,
+#book-tickets__quantity,
+#book-tickets__expense,
+#book-tickets__total-price {
+    width: 200px;
+    text-align: right;
+}
+
+.book-tickets__booking-field + .book-tickets__booking-field {
+    margin-top: 6px;
+}
+
+.book-tickets__booking-total-price {
+    margin-top: 48px !important;
+    position: relative;
+}
+
+    .book-tickets__booking-total-price::before {
+        content: "";
+        border-top: 2px solid var(--orange-color);
+        position: absolute;
+        width: calc(100% + 32px * 2);
+        margin: 0 -32px;
+        top: -12px;
+    }
+
+.book-tickets__booking-summary-pay-btn {
+    display: block;
+    text-align: center;
+    letter-spacing: 1px;
+    font-weight: 500;
+    color: var(--text-color);
+    background-color: var(--my-red-color);
+    width: 100%;
+    margin-top: 12px;
+    padding: 12px 0;
+    font-size: 16px;
+    text-transform: uppercase;
+    border-radius: 4px;
+    cursor: pointer;
+    user-select: none;
+}
+
+    .book-tickets__booking-summary-pay-btn:hover {
+        opacity: 0.8;
+    }

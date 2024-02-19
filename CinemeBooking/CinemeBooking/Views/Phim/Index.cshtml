@@ -1,0 +1,31 @@
+﻿@model IEnumerable<CinemeBooking.Models.Phim>
+@{
+    ViewBag.Title = "Index";
+}
+
+@Html.Partial("_Navbar")
+
+<div class="content">
+    <div class="films">
+        <h4 class="films__title">Phim đang chiếu</h4>
+
+        <ul class="films__content grid-4-col">
+            @if (Model != null && Model.Any())
+            {
+                foreach (var item in Model)
+                {
+                    <li class="films__item">
+                        <a href="/Phim/Details/@item.id">
+                            <img class="films__item-img"
+                                 src="@item.ApPhich"
+                                 alt="@item.TenPhim" />
+                        </a>
+                        <p class="films-item-des">@item.TenPhim</p>
+                    </li>
+                }
+            }
+        </ul>
+    </div>
+</div>
+
+@Html.Partial("_Footer")

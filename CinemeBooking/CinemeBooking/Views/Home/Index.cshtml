@@ -1,0 +1,189 @@
+﻿@model IEnumerable<CinemeBooking.Models.Phim>
+@using CinemeBooking.Models
+@{
+    ViewBag.Title = "Home Page";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+    // helper variables
+    //var count = 0;
+}
+
+<div class="header">
+    @Html.Partial("_Navbar")
+
+    <div class="carousel">
+        <img class="carousel__img"
+             src="~/assets/images/carousel/gotg3-2.jpg"
+             alt="Đây là Carousel" />
+        <button class="carousel__previous-btn">
+            <i class="ti-angle-left"></i>
+        </button>
+        <button class="carousel__next-btn">
+            <i class="ti-angle-right"></i>
+        </button>
+    </div>
+</div>
+
+<div class="content">
+    <div class="films">
+        <h4 class="films__title">Phim đang chiếu</h4>
+
+        <ul class="films__content grid-3-col">
+            @if (Model != null && Model.Any())
+            {
+                for (int i = 0; i < Model.Count() && i < 6; i++)
+                {
+                    var item = Model.ElementAtOrDefault(i);
+                    <li class="films__item">
+                        <a href="/Phim/Details/@item.id">
+                            <img class="films__item-img"
+                                 src="@item.ApPhich"
+                                 alt="@item.TenPhim" />
+                        </a>
+                        <p class="films-item-des">@item.TenPhim</p>
+                    </li>
+                }
+            }
+        </ul>
+    </div>
+
+    <div class="promotion">
+        <h4 class="promotion__title">Tin khuyến mãi</h4>
+        <ul class="promotion__list">
+            <li class="promotion__item">
+                <a class="promotion__item-link" href="#">
+                    <img class="promotion__item-img"
+                         src="~/assets/images/promotion-thumbnails/combo-u22-thumbnail.jpg"
+                    alt="U22 vui vẻ - bắp nước siêu hạt dẻ" />
+                </a>
+            </li>
+
+            <li class="promotion__item">
+                <a class="promotion__item-link" href="#">
+                    <img class="promotion__item-img"
+                         src="~/assets/images/promotion-thumbnails/vn-pay-10-percent-thumbnail.jpg"
+                         alt="VNPAY giảm ngay 15K!" />
+                </a>
+            </li>
+
+            <li class="promotion__item">
+                <a class="promotion__item-link" href="#">
+                    <img class="promotion__item-img"
+                         src="~/assets/images/promotion-thumbnails/ngay-tri-an-thumbnail.jpg"
+                         alt="Ngày tri ân của Galaxy Cinema" />
+                </a>
+            </li>
+
+            <li class="promotion__item">
+                <a class="promotion__item-link" href="#">
+                    <img class="promotion__item-img"
+                         src="~/promotion-thumbnails/thu-3-vui-ve-thumbnail.jpg"
+                         alt="Happy day" />
+                </a>
+            </li>
+
+            <li class="promotion__item">
+                <a class="promotion__item-link" href="#">
+                    <img class="promotion__item-img"
+                         src="~/assets/images/promotion-thumbnails/milo-kv-thumbnail.jpg"
+                         alt="Milo siêu khủng giá chỉ 19K" />
+                </a>
+            </li>
+
+            <li class="promotion__item">
+                <a class="promotion__item-link" href="#">
+                    <img class="promotion__item-img"
+                         src="~/assets/images/promotion-thumbnails/bang-qltv-thumbnail.jpg"
+                         alt="Chào 2023, đón mưa quà tặng thành viên" />
+                </a>
+            </li>
+
+            <li class="promotion__item">
+                <a class="promotion__item-link" href="#">
+                    <img class="promotion__item-img"
+                         src="~/assets/images/promotion-thumbnails/free-truong-chuyen-thumbnail.jpg"
+                         alt="Galaxy Trung Chánh dành tặng suất chiếu đặc biệt" />
+                </a>
+            </li>
+        </ul>
+    </div>
+</div>
+
+@Html.Partial("_Footer")
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const carouselImg = query(".carousel__img");
+        const carouselPreviousBtn = query(".carousel__previous-btn");
+        const carouselNextBtn = query(".carousel__next-btn");
+
+        const img = [
+            "gotg3-2.jpg",
+            "lat-mat-6.jpg",
+            "combo-u22-digital.jpg",
+            "combo-dd.jpg",
+            "quet-vn-pay.jpg",
+        ];
+
+        let id = 1;
+        let intervalId;
+        let lastClickTime = 0;
+        function setSrcForImg(id) {
+            carouselImg.classList.remove("carousel--animate");
+            setTimeout(() => {
+                carouselImg.classList.add("carousel--animate");
+            }, 0);
+            setTimeout(() => {
+                carouselImg.src = `./assets/images/carousel/${img[id]}`;
+            }, 550);
+        }
+
+        function startCarousel() {
+            intervalId = setInterval(() => {
+                id++;
+                if (id >= img.length) {
+                    id = 0;
+                }
+                setSrcForImg(id);
+            }, 5000);
+        }
+
+        function stopCarousel() {
+            clearInterval(intervalId);
+        }
+
+        startCarousel();
+
+        function block550ms(callback) {
+            const currentTime = new Date().getTime();
+            if (currentTime - lastClickTime > 550) {
+                callback();
+                stopCarousel();
+                startCarousel();
+                lastClickTime = currentTime;
+            }
+        }
+
+        carouselPreviousBtn.addEventListener("click", () => {
+            block550ms(() => {
+                id--;
+                if (id < 0) {
+                    id = img.length - 1;
+                }
+
+                setSrcForImg(id);
+            });
+        });
+
+        carouselNextBtn.addEventListener("click", () => {
+            block550ms(() => {
+                id++;
+                if (id >= img.length) {
+                    id = 0;
+                }
+                setSrcForImg(id);
+            });
+        });
+
+    });
+</script>

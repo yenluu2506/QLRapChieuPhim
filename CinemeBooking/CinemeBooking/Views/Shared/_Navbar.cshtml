@@ -1,0 +1,79 @@
+﻿@{
+    ViewBag.Title = "_Header";
+}
+
+<nav class="navbar">
+    <div class="navbar-left">
+        <div class="app-logo">
+            <a href="/">N95 Cinema</a>
+        </div>
+
+        <ul class="navbar__list">
+            <li class="navbar__list-item"><a href="/Phim">Phim</a></li>
+            <li class="navbar__list-item"><a href="#">Rạp</a></li>
+            <li class="navbar__list-item"><a href="#">Thành viên</a></li>
+            <li class="navbar__list-item"><a href="#">Hỗ trợ</a></li>
+        </ul>
+    </div>
+    <div class="navbar-right">
+        <div class="account">
+            @if (!Request.IsAuthenticated)
+            {
+                <a>
+                    My Account
+                    <i class="fa fa-angle-down"></i>
+                </a>
+                <ul class="account_selection">
+                    <li class="account_selection__sign-in"><a href="/account/login"><i class="fa fa-sign-in" aria-hidden="true"></i>Sign In</a></li>
+                    <li class="account_selection__register"><a href="/account/Register"><i class="fa fa-user-plus" aria-hidden="true"></i>Register</a></li>
+                </ul>
+            }
+            else
+            {
+            <a href="#">
+                Welcome: @User.Identity.Name
+                <i class="fa fa-angle-down"></i>
+            </a>
+            <ul class="account_selection">
+                <li><a href="/"><i class="fa fa-sign-in" aria-hidden="true"></i>Profile</a></li>
+                @if (User.IsInRole("Admin"))
+                {
+                <li><a href="/Admin/phim"><i class="fa fa-sign-in" aria-hidden="true"></i>Quản trị web</a></li>
+                }
+                <li><a href="javascript:document.getElementById('logOffForm').submit()"><i class="fa fa-user-plus" aria-hidden="true"></i> Logout</a></li>
+            </ul>
+            }
+
+        </div>
+        
+
+        @if (Request.IsAuthenticated)
+        {
+            <div style="display:none">
+                @using (Html.BeginForm("LogOff", "Account", FormMethod.Post, new { @id = "logOffForm" }))
+                {
+                    @Html.AntiForgeryToken()}
+            </div>}
+        <button class="search-btn">
+            <i class="ti-search search-btn__icon"></i>
+        </button>
+    </div>
+</nav>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const myAccount = query(".account a");
+        const accountSelection = query(".account_selection");
+
+        myAccount.addEventListener("click", () => {
+            accountSelection.classList.toggle("--show");
+            if (accountSelection.classList.contains("--show")) {
+                setTimeout(() => {
+                    accountSelection.style.opacity = 1;
+                }, 10);
+            } else {
+                accountSelection.style.opacity = 0;
+            }
+        });
+    });
+</script>

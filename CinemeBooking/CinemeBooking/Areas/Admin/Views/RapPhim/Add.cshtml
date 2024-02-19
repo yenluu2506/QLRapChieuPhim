@@ -1,0 +1,129 @@
+﻿@model CinemeBooking.Models.RapPhim
+
+@{
+    ViewBag.Title = "Thêm mới Rạp";
+}
+
+@section naviheader{
+    <!-- Left navbar links -->
+    <ul class="navbar-nav">
+        <li class="nav-item">
+            <a class="nav-link" data-widget="pushmenu" href="#" role="button"><i class="fas fa-bars"></i></a>
+        </li>
+        <li class="nav-item d-none d-sm-inline-block">
+            <a href="/admin/home" class="nav-link">Trang chủ</a>
+        </li>
+        <li class="nav-item d-none d-sm-inline-block">
+            <a href="/admin/rapphim" class="nav-link">Rạp Phim</a>
+        </li>
+        <li class="nav-item d-none d-sm-inline-block">
+            <a href="#" class="nav-link">Thêm mới</a>
+        </li>
+    </ul>
+}
+
+<!-- Content Header (Page header) -->
+<section class="content-header">
+    <div class="container-fluid">
+        <div class="row mb-2">
+            <div class="col-sm-6">
+                <h1>Thêm mới Rạp</h1>
+            </div>
+            <div class="col-sm-6">
+                <ol class="breadcrumb float-sm-right">
+                    <li class="breadcrumb-item"><a href="#">Rạp</a></li>
+                    <li class="breadcrumb-item active">Thêm mới</li>
+                </ol>
+            </div>
+        </div>
+    </div><!-- /.container-fluid -->
+</section>
+
+<!-- Main content -->
+<section class="content">
+
+    <!-- Default box -->
+    <div class="card">
+        <div class="card-header">
+            <h3 class="card-title">Thông tin Rạp</h3>
+
+            <div class="card-tools">
+                <button type="button" class="btn btn-tool" data-card-widget="collapse" title="Collapse">
+                    <i class="fas fa-minus"></i>
+                </button>
+                <button type="button" class="btn btn-tool" data-card-widget="remove" title="Remove">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+        <div class="card-body">
+            <div class="bs-stepper-content">
+                @using (Html.BeginForm("Add", "RapPhim", FormMethod.Post, new { }))
+                {
+                    @Html.AntiForgeryToken()
+                    @Html.ValidationSummary(true)
+                    <!-- your steps content here -->
+                    <div id="logins-part" class="content active dstepper-block" role="tabpanel" aria-labelledby="logins-part-trigger">
+                        <div class="form-group">
+                            <label for="exampleInputEmail1">Tên Rạp</label>
+                            @Html.TextBoxFor(x => x.TenRap, new { @class = "form-control", @placeholder = "TenRap" })
+                            @Html.ValidationMessageFor(x => x.TenRap, null, new { @class = "text-danger" })
+                        </div>
+                        <div class="form-group">
+                            <label for="exampleInputPassword1">Tổng số Phòng</label>
+                            @Html.TextAreaFor(x => x.TongSoPhong, new { @class = "form-control" })
+                        </div>
+                        <div class="form-group">
+                            <label for="exampleInputPassword1">Thành Phố</label>
+                            @Html.TextBoxFor(x => x.ThanhPho, new { @class = "form-control" })
+                        </div>
+                        <div class="form-group">
+                            <label for="exampleInputPassword1">Quận/Huyện</label>
+                            @Html.TextBoxFor(x => x.QuanHuyen, new { @class = "form-control" })
+                        </div>
+                        <div class="form-group">
+                            <label for="exampleInputPassword1">Phường/Xã</label>
+                            @Html.TextBoxFor(x => x.PhuongXa, new { @class = "form-control" })
+                        </div>
+                        <div class="form-group">
+                            <a href="/admin/RapPhim" class="btn btn-danger">Quay lại</a>
+                            <button type="submit" class="btn btn-primary">Submit</button>
+                        </div>
+                    </div>
+
+                }
+            </div>
+            <!-- /.card-body -->
+            <!-- /.card -->
+        </div>
+
+</section>
+
+<!-- /.content -->
+<!-- /.content-wrapper -->
+<!-- Control Sidebar -->
+<aside class="control-sidebar control-sidebar-dark">
+    <!-- Control sidebar content goes here -->
+</aside>
+<!-- /.control-sidebar -->
+<!-- /.control-sidebar -->
+
+@section scripts{
+    <script>
+        $(document).ready(function () {
+            CKEDITOR.replace('txtDetail', {
+                customConfig: '/content/ckeditor/config.js',
+                extraAllowedContent: 'span',
+            });
+        });
+        function BrowseServer(field) {
+            var finder = new CKFinder();
+            finder.selectActionFunction = function (fileUrl) {
+                document.getElementById(field).value = fileUrl;
+            };
+            finder.popup();
+        }
+
+    </script>
+}

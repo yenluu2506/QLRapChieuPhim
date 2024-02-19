@@ -1,0 +1,67 @@
+﻿@model CinemeBooking.Models.RegisterViewModel
+@{
+    ViewBag.Title = "Register";
+}
+
+<style>
+    .register-page {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+    }
+
+    .register-container {
+        width: 300px;
+    }
+
+    .register-container h2 {
+        text-align: center;
+        margin-bottom: 24px;
+    }
+
+    .form-control {
+        padding: 8px 12px;
+        font-size: 14px;
+        width: 100%;
+    }
+
+    .form-control-first {
+        margin-top: 16px;
+    }
+
+    .form-control + .form-control {
+        margin-top: 8px;
+    }
+
+    .register-page__submit {
+        padding: 6px 8px;
+        margin-top: 20px;
+        width: 100%;
+        margin-bottom: 12px;
+    }    
+</style>
+
+<main class="register-page">
+    <div class="register-container">
+        <h2 id="title">@ViewBag.Title.</h2>
+
+        @using (Html.BeginForm("Register", "Account", FormMethod.Post, new { role = "form" }))
+        {
+            @Html.AntiForgeryToken()
+            <h4>Create a new account.</h4>
+            <hr />
+            @Html.ValidationSummary("", new { @class = "text-danger" })
+            @Html.TextBoxFor(m => m.Email, new { @class = "form-control form-control-first", placeholder = "Tên đăng nhập" })
+            @Html.PasswordFor(m => m.Password, new { @class = "form-control", placeholder = "Mật khẩu" })
+            @Html.PasswordFor(m => m.ConfirmPassword, new { @class = "form-control", placeholder = "Nhập lại mật khẩu" })
+            <input type="submit" value="Register" class="register-page__submit" />
+            <p>
+                @Html.ActionLink("Đã có tài khoản!", "Login")
+            </p>}
+    </div>
+</main>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}

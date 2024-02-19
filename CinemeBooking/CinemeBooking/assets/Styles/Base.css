@@ -1,0 +1,65 @@
+﻿:root {
+    --back-ground-color: #0e1226;
+    --text-color: white;
+    --nav-color-hover: rgb(209, 158, 41);
+    --orange-color: #f26b38;
+    --des-text-color: rgb(221, 221, 221);
+    --my-red-color: #cc2d3f;
+    --black-text-color: #000000;
+}
+
+* {
+    box-sizing: border-box;
+    padding: 0;
+    margin: 0;
+}
+
+/* Common CSS */
+ul {
+    list-style-type: none;
+}
+
+a {
+    text-decoration: none;
+    color: var(--text-color);
+}
+
+button {
+    outline: none;
+    border: none;
+    cursor: pointer;
+    display: block;
+    background-color: transparent;
+    color: var(--text-color);
+}
+
+img {
+    width: 100%;
+}
+
+.--show {
+    display: block !important;
+}
+
+.--hide {
+    display: none !important;
+}
+
+.app {
+    background-color: var(--back-ground-color);
+    font-family: "Montserrat", sans-serif;
+    color: var(--text-color);
+    min-height: 100vh;
+}
+
+.grid-4-col {
+    display: grid;
+    grid-template-columns: 23% 23% 23% 23%;
+    justify-content: space-between;
+}
+
+.grid-3-col {
+    display: grid;
+    grid-template-columns: 31% 31% 31%;
+    justify-content: space-between;
+}

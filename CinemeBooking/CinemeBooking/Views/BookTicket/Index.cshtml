@@ -1,0 +1,253 @@
+﻿@using CinemeBooking.Models;
+@using Newtonsoft.Json
+@model List<Ghe>
+
+@{
+    ViewBag.Title = "Index";
+    string gheListJson = JsonConvert.SerializeObject(Model, new JsonSerializerSettings
+    {
+        ReferenceLoopHandling = ReferenceLoopHandling.Ignore
+    });
+}
+
+@Html.Partial("_Navbar")
+
+<div class="book-tickets">
+    <div class="book-tickets__theatre">
+        <h5>@ViewBag.RapChieu.TenRap</h5>
+        <div class="book-tickets__screen">
+            <img src="~/assets/images/others/screen.png" alt="screen" />
+            <p>Screen</p>
+        </div>
+        <div class="book-tickets__room">
+            <div class="book-tickets__room-rows">
+                <p>A</p>
+                <p>B</p>
+                <p>C</p>
+                <p>D</p>
+                <p>E</p>
+                <p>F</p>
+            </div>
+
+            <div class="book-tickets__seats"></div>
+
+            <div class="book-tickets__room-rows">
+                <p>A</p>
+                <p>B</p>
+                <p>C</p>
+                <p>D</p>
+                <p>E</p>
+                <p>F</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="book-tickets__booking">
+        <div class="book-tickets__film">
+            <img src="~/assets/images/films-450x300/gotg-vol-3-thumbnail.jpg"
+                    alt="gotg vol 3" />
+            <div class="book-tickets__film-shadow"></div>
+        </div>
+
+        <div class="book-tickets__booking-summary">
+            <div class="book-tickets__booking-payment">
+                <h5>Giá Vé</h5>
+                <p class="book-tickets__booking-summary-seat-number">
+                    Số ghế đã chọn: <span></span>
+                </p>
+
+                <div class="book-tickets__booking-price">
+                    <div class="book-tickets__booking-field">
+                        <p>Giá Vé:</p>
+                        <p id="book-tickets__price"></p>
+                    </div>
+
+                    <div class="book-tickets__booking-field">
+                        <p>Số Lượng:</p>
+                        <p id="book-tickets__quantity">x 2</p>
+                    </div>
+
+                    <div class="book-tickets__booking-field">
+                        <p>Phụ Phí:</p>
+                        <p id="book-tickets__expense">@ViewBag.LichChieu.PhuPhi</p>
+                    </div>
+
+                    <div class="book-tickets__booking-field book-tickets__booking-total-price">
+                        <p>Tổng tiền:</p>
+                        <p id="book-tickets__total-price"></p>
+                    </div>
+                </div>
+            </div>
+            <a class="book-tickets__booking-summary-pay-btn"> Thanh Toán </a>
+        </div>
+    </div>
+</div>
+
+@Html.Partial("_Footer")
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const seatContainer = query('.book-tickets__seats');
+        const bookingSummary = query('.book-tickets__booking-summary');
+        const payment = query('.book-tickets__booking-summary-pay-btn');
+        const totalPriceElement = query("#book-tickets__total-price");
+        const quantityElement = query("#book-tickets__quantity");
+
+
+
+        let gheList = @Html.Raw(gheListJson);
+        let maGheHienTai = 'A';
+        let row = document.createElement("div");
+        row.classList.add("book-tickets__seats-row");
+        seatContainer.appendChild(row);
+
+        let count = 0;
+        let col;
+        let isAnySeatClicked = false;
+        let selectedSeats = [];
+        let selectedSeatCountsMap = {};
+        let totalPrice = 0;
+        let gheIds = [];
+        let quantities = [];
+
+        gheList.forEach((ghe) => {
+            if (count === 0 || count === 5 || count === 11) {
+                col = document.createElement("div");
+                col.classList.add("book-tickets__seats-col");
+                row.appendChild(col);
+            }
+
+            let button = document.createElement("button");
+            button.textContent = ghe.MaGhe;
+            button.value = ghe.id;
+            button.addEventListener("click", () => {
+
+                button.classList.toggle("book-tickets__seats-btn--clicked");
+                isAnySeatClicked = checkAnySeatClicked();
+
+                // Lấy ghe.MaGhe của ghế được chọn
+                const seatNumber = ghe.MaGhe;
+
+                // Kiểm tra xem ghế đã được chọn hay chưa
+                const index = selectedSeats.indexOf(seatNumber);
+                if (index === -1) {
+                    // Ghế chưa được chọn, thêm vào danh sách ghế đã chọn
+                    selectedSeats.push(seatNumber);
+                } else {
+                    // Ghế đã được chọn, loại bỏ khỏi danh sách ghế đã chọn
+                    selectedSeats.splice(index, 1);
+                }
+
+                updateBookingSummary();
+
+                const seatPriceElement = query("#book-tickets__price");
+                const seatPrice = ghe.GiaGhe;
+
+                 //Kiểm tra xem giá ghế của các ghế đã chọn có giống nhau hay không
+                const isSameSeatPrice = selectedSeats.every((seatNumber) => {
+                    const seat = gheList.find((ghe) => ghe.MaGhe === seatNumber);
+                    return seat && seat.GiaGhe === seatPrice;
+                });
+
+                if (isSameSeatPrice) {
+                    seatPriceElement.textContent = seatPrice + " VNĐ";
+                } else {
+                    let seatPrices = selectedSeats.map((seatNumber) => {
+                        const seat = gheList.find((ghe) => ghe.MaGhe === seatNumber);
+                        return seat ? seat.GiaGhe : null;
+                    });
+                   seatPrices = seatPrices.filter(function (value, index, array) {
+                        return array.indexOf(value) === index;
+                   });
+                    seatPriceElement.textContent = seatPrices.join(", ") + " VNĐ";
+                }
+
+                if (button.classList.contains("book-tickets__seats-btn--clicked")) {
+                    // Ghế được chọn
+                    gheIds.push(ghe.id);
+
+                    // Cập nhật số lượng ghế theo giá tiền trong selectedSeatCountsMap
+                    if (selectedSeatCountsMap[ghe.GiaGhe]) {
+                        selectedSeatCountsMap[ghe.GiaGhe] += 1;
+                    } else {
+                        selectedSeatCountsMap[ghe.GiaGhe] = 1;
+                    } 
+
+                    totalPrice += (+ghe.GiaGhe + @ViewBag.LichChieu.PhuPhi ?? 0);
+                    totalPriceElement.textContent = totalPrice;
+
+                } else {
+                    // Ghế bị bỏ chọn
+                    gheIds = gheIds.filter(element => element !== ghe.id);
+                    // Giảm số lượng ghế theo giá tiền trong selectedSeatCountsMap
+                    if (selectedSeatCountsMap[ghe.GiaGhe]) {
+                        selectedSeatCountsMap[ghe.GiaGhe] -= 1;
+                    }
+
+                    totalPrice -= (+ghe.GiaGhe + @ViewBag.LichChieu.PhuPhi ?? 0);
+                    totalPriceElement.textContent = totalPrice;
+                }
+
+                // Cập nhật nội dung quantityElement từ selectedSeatCountsMap
+                quantities = Object.entries(selectedSeatCountsMap).map(([price, count]) => {
+                    return `x ${count}`;
+                });
+                for (var i = quantities.length - 1; i >= 0; i--) {
+                    if (quantities[i].includes('0')) {
+                        quantities.splice(i, 1);
+                    }
+                }
+                console.log(quantities)
+                quantityElement.textContent = quantities.join(", ");
+
+                const gheIdsParam = gheIds.map(element => 'gheIds[]=' + element).join('&');
+                payment.href = `/bookticket/checkout/?totalPrice=${totalPrice}&lcId=@ViewBag.LichChieu.id&${gheIdsParam}&tkId=@User.Identity.Name`;
+
+            });
+            col.appendChild(button);
+
+            count++;
+
+            if (count === 16) {
+                count = 0;
+                maGheHienTai = String.fromCharCode(maGheHienTai.charCodeAt(0) + 1);
+                row = document.createElement("div");
+                row.classList.add("book-tickets__seats-row");
+                seatContainer.appendChild(row);
+            }
+        });
+
+        let lastRow = seatContainer.lastElementChild;
+        let i = lastRow.childElementCount;
+        while (i < 3) {
+            let thisCol = document.createElement("div");
+            thisCol.classList.add("book-tickets__seats-col");
+            thisCol.textContent = "Empty";
+            thisCol.style.width = `${lastRow.firstElementChild.offsetWidth}px`;
+            lastRow.appendChild(thisCol);
+            i++;
+        }
+
+        // Kiểm tra xem có ghế nào được chọn hay không
+        function checkAnySeatClicked() {
+            const clickedButtons = Array.from(seatContainer.querySelectorAll("button.book-tickets__seats-btn--clicked"));
+            return clickedButtons.length > 0;
+        }
+
+        function updateBookingSummary() {
+            const seatNumberElement = query(".book-tickets__booking-summary-seat-number > span");
+            seatNumberElement.textContent = selectedSeats.join(", ");
+
+            if (isAnySeatClicked) {
+                bookingSummary.style.display = "block";
+            } else {
+                bookingSummary.style.display = "none";
+            }
+        }
+
+        // Gọi hàm cập nhật khi có sự thay đổi trong danh sách ghế
+        seatContainer.addEventListener("click", updateBookingSummary);
+
+
+    });
+</script>

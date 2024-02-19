@@ -1,0 +1,94 @@
+﻿@using CinemeBooking.Models
+@model LoginViewModel
+@{
+    ViewBag.Title = "Log in";
+}
+
+<style>
+    .login-page {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+        
+    }
+
+    .login-container {
+        width: 300px;
+    }
+
+    .login-container h2 {
+        text-align: center;
+        margin-bottom: 32px;
+    }
+
+
+    .form-control {
+        padding: 8px 12px;
+        font-size: 14px;
+        width: 100%;
+    }
+
+    .login-page__username {
+        margin-top: 24px;
+        margin-bottom: 8px;
+    }
+
+    .login-page__checkbox {
+        margin-top: 24px;
+        user-select: none;
+    }
+
+    .login-page__submit {
+        padding: 6px 8px;
+        margin-top: 12px;
+        width: 100%;
+        margin-bottom: 12px;
+    }
+
+    #socialLoginForm {
+        margin-top: 24px;
+    }
+</style>
+
+<div class="login-page">
+    <div class="login-container">
+        <h2>@ViewBag.Title.</h2>
+            <section id="loginForm">
+                @using (Html.BeginForm("Login", "Account", new { ReturnUrl = ViewBag.ReturnUrl }, FormMethod.Post, new { role = "form" }))
+                {
+                    @Html.AntiForgeryToken()
+                    <h4>Use a local account to log in.</h4>
+                    <hr />
+                    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                    <div class="login-page__username">
+                            @Html.TextBoxFor(m => m.UserName, new { @class = "form-control ", @placeholder = "Tên đăng nhập"})
+                            @Html.ValidationMessageFor(m => m.UserName, "", new { @class = "text-danger"})
+                    </div>
+                            @Html.PasswordFor(m => m.Password, new { @class = "form-control", @placeholder = "Mật khẩu" })
+                            @Html.ValidationMessageFor(m => m.Password, "", new { @class = "text-danger" })
+                            <div class="login-page__checkbox">
+                                @Html.CheckBoxFor(m => m.RememberMe)
+                                @Html.LabelFor(m => m.RememberMe)
+                            </div>
+                            <input type="submit" value="Log in" class="login-page__submit" />
+                    <p>
+                        @Html.ActionLink("Register as a new user", "Register")
+                    </p>
+                    @* Enable this once you have account confirmation enabled for password reset functionality
+                    <p>
+                        @Html.ActionLink("Forgot your password?", "ForgotPassword")
+                    </p>*@
+                }
+            </section>
+            
+                @*<section id="socialLoginForm">
+                    @Html.Partial("_ExternalLoginsListPartial", new ExternalLoginListViewModel { ReturnUrl = ViewBag.ReturnUrl })
+                </section>*@
+            
+    </div>
+</div>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}

@@ -1,0 +1,250 @@
+﻿@model CinemeBooking.Models.Phim
+@{
+    ViewBag.Title = "Cập nhật Phim";
+}
+
+
+@section naviheader{
+    <!-- Left navbar links -->
+    <ul class="navbar-nav">
+        <li class="nav-item">
+            <a class="nav-link" data-widget="pushmenu" href="#" role="button"><i class="fas fa-bars"></i></a>
+        </li>
+        <li class="nav-item d-none d-sm-inline-block">
+            <a href="/admin/home" class="nav-link">Trang chủ</a>
+        </li>
+        <li class="nav-item d-none d-sm-inline-block">
+            <a href="/admin/phim" class="nav-link">Phim</a>
+        </li>
+        <li class="nav-item d-none d-sm-inline-block">
+            <a href="#" class="nav-link">Cập nhật</a>
+        </li>
+    </ul>
+}
+
+<!-- Content Header (Page header) -->
+<section class="content-header">
+    <div class="container-fluid">
+        <div class="row mb-2">
+            <div class="col-sm-6">
+                <h1>@ViewBag.Title</h1>
+            </div>
+            <div class="col-sm-6">
+                <ol class="breadcrumb float-sm-right">
+                    <li class="breadcrumb-item"><a href="#">Phim</a></li>
+                    <li class="breadcrumb-item active">Cập nhật</li>
+                </ol>
+            </div>
+        </div>
+    </div><!-- /.container-fluid -->
+</section>
+
+<!-- Main content -->
+<section class="content">
+
+    <!-- Default box -->
+    <div class="card">
+        <div class="card-header">
+            <h3 class="card-title">Thông tin Phim</h3>
+
+            <div class="card-tools">
+                <button type="button" class="btn btn-tool" data-card-widget="collapse" title="Collapse">
+                    <i class="fas fa-minus"></i>
+                </button>
+                <button type="button" class="btn btn-tool" data-card-widget="remove" title="Remove">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="bs-stepper-content">
+                @using (Html.BeginForm("Edit", "Phim", FormMethod.Post, new { }))
+                {
+                    @Html.AntiForgeryToken()
+                    @Html.ValidationSummary(true)
+                    <!-- your steps content here -->
+                    <div id="logins-part" class="content active dstepper-block" role="tabpanel" aria-labelledby="logins-part-trigger">
+                        <div class="form-group">
+                            <label for="exampleInputEmail1">Tên phim</label>
+                            @Html.TextBoxFor(x => x.TenPhim, new { @class = "form-control", @placeholder = "TenPhim" })
+                            @Html.ValidationMessageFor(x => x.TenPhim, null, new { @class = "text-danger" })
+                        </div>
+                        <div class="form-group">
+                            <label for="exampleInputFile">Ảnh</label>
+                            <div class="input-group">
+                                <div class="custom-file">
+                                    @Html.TextBoxFor(x => x.ApPhich, new { @id = "txtImage", @class = "form-control" })
+                                </div>
+                                <div class="input-group-append">
+                                    <input type="button" value="Tải ảnh" onclick="BrowseServer('txtImage');" />
+                                </div>
+                            </div>
+                        </div>
+
+                        <input type="hidden" id="selectedTheLoaisHidden" name="selectedTheLoais" />
+                        <div class="form-group">
+                            <label>Thể loại</label>
+                            <select id="selectedTheLoais" name="selectedTheLoais" multiple="multiple">
+                                @foreach (var item in (IEnumerable<SelectListItem>)ViewBag.list_TheLoai)
+                                {
+                                    <option value="@item.Value" @(Array.IndexOf(ViewBag.selectedTheLoais, item.Value) >= 0 ? "selected" : "")>@item.Text</option>
+                                }
+                            </select>
+                        </div>
+
+
+                        <div class="form-group">
+                            <label for="exampleInputPassword1">Mô tả</label>
+                            @Html.TextAreaFor(x => x.MoTa, new { @class = "form-control" })
+                        </div>
+
+
+                        <div class="form-group">
+                            <label for="exampleInputPassword1">Thời lượng</label>
+                            @Html.TextBoxFor(x => x.ThoiLuong, new { @class = "form-control" })
+                        </div>
+                        <div class="form-group">
+                            <label for="startdate">Ngày khởi chiếu</label>
+                            <div class="input-group date" id="startdate" data-target-input="nearest">
+                                @Html.TextBoxFor(x => x.NgayKhoiChieu, new { @class = "form-control datetimepicker-input", data_target = "#startdate" })
+                                <div class="input-group-append" data-target="#startdate" data-toggle="datetimepicker">
+                                    <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="enddate">Ngày kết thúc</label>
+                            <div class="input-group date" id="enddate" data-target-input="nearest">
+                                @Html.TextBoxFor(x => x.NgayKetThuc, new { @class = "form-control datetimepicker-input", data_target = "#enddate" })
+                                <div class="input-group-append" data-target="#enddate" data-toggle="datetimepicker">
+                                    <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="exampleInputPassword1">Hiển thị</label>
+                            @Html.CheckBoxFor(x => x.TrangThai, new { @checked = "@checked" })
+                        </div>
+                        <div class="form-group">
+                            <label for="exampleInputPassword1">Quốc Gia</label>
+                            @Html.TextBoxFor(x => x.QuocGia, new { @class = "form-control" })
+                        </div>
+                        <div class="form-group">
+                            <label for="exampleInputPassword1">Đạo diễn</label>
+                            @Html.TextBoxFor(x => x.DaoDien, new { @class = "form-control" })
+                        </div>
+                        <div class="form-group">
+                            <label for="exampleInputPassword1">Diễn viên</label>
+                            @Html.TextAreaFor(x => x.DienVien, new { @class = "form-control" })
+                        </div>
+                        <div class="form-group">
+                            <label for="exampleInputPassword1">Năm SX</label>
+                            @Html.TextBoxFor(x => x.NamSX, new { @class = "form-control" })
+                        </div>
+                        <div class="form-group">
+                            <a href="/admin/Phim" class="btn btn-danger">Quay lại</a>
+                            <button type="submit" class="btn btn-primary">Submit</button>
+                        </div>
+                    </div>
+
+                }
+            </div>
+            <!-- /.card-body -->
+            <!-- /.card -->
+        </div>
+</section>
+<!-- /.content -->
+<!-- /.content-wrapper -->
+<!-- Control Sidebar -->
+<aside class="control-sidebar control-sidebar-dark">
+    <!-- Control sidebar content goes here -->
+</aside>
+<!-- /.control-sidebar -->
+
+@section scripts{
+    <script>
+        $(document).ready(function () {
+            CKEDITOR.replace('txtDetail', {
+                customConfig: '/content/ckeditor/config.js',
+                extraAllowedContent: 'span',
+            });
+        });
+        function BrowseServer(field) {
+            var finder = new CKFinder();
+            finder.selectActionFunction = function (fileUrl) {
+                document.getElementById(field).value = fileUrl;
+            };
+            finder.popup();
+        }
+
+        //$(function () {
+        //    $(".datepicker").datepicker({
+        //        dateFormat: "dd/mm/yy",
+        //        changeMonth: true,
+        //        changeYear: true,
+        //        //yearRange:"-10:+10"
+        //        showOn: "both",
+        //        buttonText: "<i class='fa fa-calendar'></i>"
+        //    });
+        //});
+        //$(function () {
+        //    $(".datepicker1").datepicker({
+        //        dateFormat: "dd/mm/yy",
+        //        changeMonth: true,
+        //        changeYear: true,
+        //        //yearRange:"-10:+10"
+        //        showOn: "both",
+        //        buttonText: "<i class='fa fa-calendar'></i>"
+        //    });
+        //});
+        ////Initialize Select2 Elements
+
+        $(function () {
+            // Date picker for start date
+            $('#startdate').datetimepicker({
+                format: 'L',
+                icons: {
+                    time: 'far fa-clock',
+                    date: 'fa fa-calendar',
+                    up: 'fa fa-chevron-up',
+                    down: 'fa fa-chevron-down',
+                    previous: 'fa fa-chevron-left',
+                    next: 'fa fa-chevron-right',
+                    today: 'fa fa-calendar-check-o',
+                    clear: 'fa fa-trash',
+                    close: 'fa fa-times'
+                }
+            });
+
+            // Date picker for end date
+            $('#enddate').datetimepicker({
+                format: 'L',
+                icons: {
+                    time: 'far fa-clock',
+                    date: 'fa fa-calendar',
+                    up: 'fa fa-chevron-up',
+                    down: 'fa fa-chevron-down',
+                    previous: 'fa fa-chevron-left',
+                    next: 'fa fa-chevron-right',
+                    today: 'fa fa-calendar-check-o',
+                    clear: 'fa fa-trash',
+                    close: 'fa fa-times'
+                }
+            });
+
+            $(function () {
+                $('#selectedTheLoais').select2({
+                    theme: 'bootstrap4',
+                    placeholder: 'Select a State',
+                    width: '100%'
+                });
+            });
+        });
+
+    </script>
+    <!-- Select2 -->
+    <link rel="stylesheet" href="~/Content/clients/plugins/select2/css/select2.min.css">
+    <link rel="stylesheet" href="~/Content/clients/plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css">
+}
